@@ -42,31 +42,34 @@
 </body>
 
 <script type="text/javascript">
-    let vue = new Vue({
+    let app = new Vue({
         el: '#vue-element',
         data: {
             toolItems: [],
             gameItems: []
         },
-        created: () => {
+        created() {
             axios.get('./appsList.json').then(appsList => {
                 // create tool items list
                 appsList.data.toolList.forEach(item => {
-                    this.toolItems.push({id:item.id, linkString:item.title});
+                    this.toolItems.push(this.createItem(item));
                 });
 
                 // create game items list
-                // appsList.gameList.forEach(item => {
-                //     this.gameItems.push({id:item.id, linkString:item.title});
-                // });
+                appsList.data.gameList.forEach(item => {
+                    this.gameItems.push(this.createItem(item));
+                });
             });
-            // this.toolItems.push({id:1, listItem:'aaaa'});
-            // this.toolItems.push({id:2, listItem:'bbbb'});
-            // this.toolItems.push({id:3, listItem:'cccc'});
-
-            // this.gameItems.push({id:1, listItem:'1234'});
-            // this.gameItems.push({id:2, listItem:'1234'});
-            // this.gameItems.push({id:3, listItem:'1234'});
+        },
+        methods: {
+            /** create one item */
+            createItem: function (item) {
+                // TODO
+                return {
+                    id: item.id,
+                    linkString: item.title
+                }
+            }
         }
     });
 </script>
