@@ -51,8 +51,9 @@
         created: () => {
             axios.get('./appsList.json').then(appsList => {
                 // create tool items list
-                let list = JSON.parse(appsList);
-                list.toolList.forEach(item => {
+                console.log(appsList);
+                console.log(appsList.toolList);
+                appsList.toolList.forEach(item => {
                     this.toolItems.push({id:item.id, linkString:item.title});
                 });
 
