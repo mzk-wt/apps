@@ -51,14 +51,15 @@
         created: () => {
             axios.get('./appsList.json').then(appsList => {
                 // create tool items list
-                appsList.toolList.forEach(item => {
+                let list = JSON.parse(appsList);
+                list.toolList.forEach(item => {
                     this.toolItems.push({id:item.id, linkString:item.title});
                 });
 
                 // create game items list
-                appsList.gameList.forEach(item => {
-                    this.gameItems.push({id:item.id, linkString:item.title});
-                });
+                // appsList.gameList.forEach(item => {
+                //     this.gameItems.push({id:item.id, linkString:item.title});
+                // });
             });
             // this.toolItems.push({id:1, listItem:'aaaa'});
             // this.toolItems.push({id:2, listItem:'bbbb'});
