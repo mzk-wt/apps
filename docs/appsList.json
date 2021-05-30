@@ -1,0 +1,11 @@
+{
+    "toolList": [
+        {"id": 1, "title": "aaa", "url": ""},
+        {"id": 2, "title": "bbb", "url": ""}
+    ],
+
+    "gameList": [
+        {"id": 1, "title": "ccc", "url": ""},
+        {"id": 2, "title": "ddd", "url": ""}
+    ]
+}

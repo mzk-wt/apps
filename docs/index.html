@@ -1,1 +1,73 @@
-test
+<html>
+<head>
+    <title>WTApps</title>
+    <style rel="stylesheet" href="./css/common.css"></style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>                                                                            
+<body>                                                                         
+    <div id="vue-element">                                                         
+        <h1>アプリ置き場</h1>                                                            
+        <div class="contents-area">                                                
+            <table class="table">                                                  
+                <tr>                                                               
+                    <td width="50%">                                               
+                        <h3>Tools</h3>                                             
+                        <table class="table-scrollable table-borderless">          
+                            <tr>                                                   
+                                <td>                                               
+                                    <ul id="tools-list">                           
+                                        <li v-for="item in toolItems" :key="item.id">{{ item.linkString }}</li>
+                                    </ul>                                          
+                                </td>                                              
+                            </tr>                                              
+                        </table>                                                   
+                    </td>                                                          
+                    <td width="50%">                                               
+                        <h3>Games</h3>                                             
+                        <table class="table-scrollable table-borderless">          
+                            <tr>                                                   
+                                <td>
+                                    <ul id="games-list">
+                                        <li v-for="item in gameItems" :key="item.id">{{ item.linkString }}</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    let vue = new Vue({
+        el: '#vue-element',
+        data: {
+            toolItems: [],
+            gameItems: []
+        },
+        created: () => {
+            axios.get('./appsList.json').then(appsList => {
+                // create tool items list
+                appsList.toolList.forEach(item => {
+                    this.toolItems.push({id:item.id, linkString:item.title});
+                });
+
+                // create game items list
+                appsList.gameList.forEach(item => {
+                    this.gameItems.push({id:item.id, linkString:item.title});
+                });
+            });
+            // this.toolItems.push({id:1, listItem:'aaaa'});
+            // this.toolItems.push({id:2, listItem:'bbbb'});
+            // this.toolItems.push({id:3, listItem:'cccc'});
+
+            // this.gameItems.push({id:1, listItem:'1234'});
+            // this.gameItems.push({id:2, listItem:'1234'});
+            // this.gameItems.push({id:3, listItem:'1234'});
+        }
+    });
+</script>
+</html>
