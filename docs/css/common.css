@@ -1,17 +1,26 @@
 h1 {
-    
+
+}
+
+h3 {
+
 }
 
 .contents-area {
-
+    width: 500px;
+    margin-left: 30px;
 }
 
 .table {
+    width: 100%;
+}
 
+.table-col {
+    width: 50%;
 }
 
 .table-borderless {
-
+    border: 0;
 }
 
 .table-scrollable {

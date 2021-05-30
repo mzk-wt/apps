@@ -1,32 +1,32 @@
 <html>
 <head>
     <title>WTApps</title>
-    <style rel="stylesheet" href="./css/common.css"></style>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>    
+    <link rel="stylesheet" href="./css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-</head>                                                                            
-<body>                                                                         
-    <div id="vue-element">                                                         
-        <h1>アプリ置き場</h1>                                                            
-        <div class="contents-area">                                                
-            <table class="table">                                                  
-                <tr>                                                               
-                    <td width="50%">                                               
-                        <h3>Tools</h3>                                             
-                        <table class="table-scrollable table-borderless">          
-                            <tr>                                                   
-                                <td>                                               
-                                    <ul id="tools-list">                           
+</head>
+<body>
+    <div id="vue-element">
+        <h1>自作アプリ置き場</h1>
+        <div class="contents-area">
+            <table class="table">
+                <tr>
+                    <td class="table-col">
+                        <h3>Tools</h3>
+                        <table class="table table-scrollable table-borderless">
+                            <tr>
+                                <td>
+                                    <ul id="tools-list">
                                         <li v-for="item in toolItems" :key="item.id">{{ item.linkString }}</li>
-                                    </ul>                                          
-                                </td>                                              
-                            </tr>                                              
-                        </table>                                                   
-                    </td>                                                          
-                    <td width="50%">                                               
-                        <h3>Games</h3>                                             
-                        <table class="table-scrollable table-borderless">          
-                            <tr>                                                   
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="table-col">
+                        <h3>Games</h3>
+                        <table class="table table-scrollable table-borderless">
+                            <tr>
                                 <td>
                                     <ul id="games-list">
                                         <li v-for="item in gameItems" :key="item.id">{{ item.linkString }}</li>
