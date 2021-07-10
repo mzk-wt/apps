@@ -1,0 +1,575 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset = UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>WTApps</title>
+
+    <!-- ******************* -->
+    <!-- *** StyleSheets *** -->
+    <!-- ******************* -->
+    <!-- vue-js-modal -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-js-modal@1.3.31/dist/styles.css">
+    <!-- bootstrap -->
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <!-- my style -->
+    <link rel="stylesheet" href="../../common.css"> 
+    
+    <!-- ******************* -->
+    <!-- *** Scripts     *** -->
+    <!-- ******************* -->
+    <!-- vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- vue-js-modal -->
+    <script src="https://cdn.jsdelivr.net/npm/vue-js-modal@1.3.31/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-color@2.7.0/dist/vue-color.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <!-- bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- my script -->
+    <script src="../../js/common.js"></script>
+
+    <!-- vue mixin -->
+    <script src="../../js/mixin/canvasUtils.js"></script>
+    
+    <!-- vue components -->
+    <script src="../../js/components/inputFile.js"></script>
+    <script src="../../js/components/colorPicker.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="contents-area">
+            <h1>トランプ画像生成機</h1>
+            <p class="description">
+                マークや絵札や裏面の図案などを選択するだけで簡単にトランプの画像を作成できます。<br>
+                マークや絵札や裏面の図案は用意されたものから選択する他、オリジナルの画像をアップロードして使うことも可能です。<br>
+                また、作成した画像はPNG形式のファイルとしてダウンロードすることができます。<br>
+                ライセンス等は特にありませんので、フリー素材としてお使いください。（商用利用も可）
+            </p>
+
+            <!-- 描画エリア -->
+            <canvas ref="canvas" :width="canvasWidth" :height="canvasHeight" class="canvas"></canvas>
+
+            <!-- 設定エリア -->
+            <ul class="nav nav-tabs">
+                <li class="nav-item"><a href="#image-setting" class="nav-link active" data-toggle="tab">画像</a></li>
+                <li class="nav-item"><a href="#color-shape-setting" class="nav-link" data-toggle="tab">色・形状</a></li>
+                <li class="nav-item"><a href="#download" class="nav-link" data-toggle="tab">ダウンロード</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- 画像 -->
+                <div id="image-setting" class="tab-pane active">
+                    <table class="table table-borderless table-config" style="padding-left: 30px;">
+                        <tr>
+                            <td class="label">マーク：</td>
+                            <td class="flex-row">
+                                <select v-model="markSelected">
+                                    <option v-for="option in markOptions" v-bind:value="option.value">{{ option.text }}</option>
+                                </select>
+                                <input-file v-model="markUploadFile"></input-file>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">ジャック：</td>
+                            <td class="flex-row">
+                                <select v-model="jackSelected">
+                                    <option v-for="option in jackOptions" v-bind:value="option.value">{{ option.text }}</option>
+                                </select>
+                                <input-file v-model="jackUploadFile"></input-file>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">クイーン：</td>
+                            <td class="flex-row">
+                                <select v-model="queenSelected">
+                                    <option v-for="option in queenOptions" v-bind:value="option.value">{{ option.text }}</option>
+                                </select>
+                                <input-file v-model="queenUploadFile"></input-file>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">キング：</td>
+                            <td class="flex-row">
+                                <select v-model="kingSelected">
+                                    <option v-for="option in kingOptions" v-bind:value="option.value">{{ option.text }}</option>
+                                </select>
+                                <input-file v-model="kingUploadFile"></input-file>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">ジョーカー：</td>
+                            <td class="flex-row">
+                                <select v-model="jorkerSelected">
+                                    <option v-for="option in jorkerOptions" v-bind:value="option.value">{{ option.text }}</option>
+                                </select>
+                                <input-file v-model="jorkerUploadFile"></input-file>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">裏面：</td>
+                            <td class="flex-row">
+                                <select v-model="backImgSelected">
+                                    <option v-for="option in backImgOptions" v-bind:value="option.value">{{ option.text }}</option>
+                                </select>
+                                <input-file v-model="backImgUploadFile"></input-file>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            <!--
+            <h5>フォント</h5>
+            <table class="table table-borderless table-config" style="padding-left: 30px;">
+                <tr>
+                    <td class="label">数字：</td>
+                    <td>
+                        <select v-model="numberFontSelected">
+                            <option v-for="option in numberFontOptions" v-bind:value="option.value">{{ option.text }}</option>
+                        </select>
+                    </td>
+                    <td class="label">サイズ：</td>
+                    <td>
+                        <select v-model="numberSizeSelected">
+                            <option v-for="option in numberSizeOptions" v-bind:value="option.value">{{ option.text }}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">英字：</td>
+                    <td>
+                        <select v-model="englishFontSelected">
+                            <option v-for="option in englishFontOptions" v-bind:value="option.value">{{ option.text }}</option>
+                        </select>
+                    </td>
+                    <td class="label">サイズ：</td>
+                    <td>
+                        <select v-model="englishSizeSelected">
+                            <option v-for="option in englishSizeOptions" v-bind:value="option.value">{{ option.text }}</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            -->
+
+                <!-- 色・形状 -->
+                <div id="color-shape-setting" class="tab-pane">
+                    <table class="table table-borderless table-config" style="padding-left: 30px;">
+                        <tr>
+                            <td class="label">背景色：</td>
+                            <td>
+                                <color-picker v-model="bgColorSelected" name="bc"></color-picker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">枠線：</td>
+                            <td class="flex-row">
+                                <select v-model="borderSelected">
+                                    <option v-for="option in borderOptions" v-bind:value="option.value">{{ option.text }}</option>
+                                </select>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <color-picker v-model="borderColorSelected" name="boc"></color-picker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">文字色：</td>
+                            <td class="flex-row">
+                                <color-picker v-model="textColorRedSelected" name="tcr"></color-picker>
+                                （ハート、ダイヤ）
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <color-picker v-model="textColorBlackSelected" name="tcb"></color-picker>
+                                （クローバー、スペード）
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">サイズ：</td>
+                            <td>
+                                <select v-model="cardSizeSelected">
+                                    <option v-for="option in cardSizeOptions" v-bind:value="option.value">{{ option.text }}</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- ダウンロード -->
+                <div id="download" class="tab-pane">
+                    <button class="btn btn-primary" @click="download">ダウンロード</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            // キャンバス
+            canvasWidth: 855,
+            canvasHeight: 460,
+            canvasPadding: 5,
+            // トランプ
+            trumpHeight: 90,
+            // trumpWidth: 65,
+            markSizeS: 10,
+            markSize: 16,
+            // 画像
+            markSelected: '1',
+            jackSelected: '1',
+            queenSelected: '1',
+            kingSelected: '1',
+            jorkerSelected: '1',
+            backImgSelected: '1',
+            markOptions: [],
+            jackOptions: [],
+            queenOptions: [],
+            kingOptions: [],
+            jorkerOptions: [],
+            backImgOptions: [],
+            markUploadFile: null,
+            jackUploadFile: null,
+            queenUploadFile: null,
+            kingUploadFile: null,
+            jorkerUploadFile: null,
+            backImgUploadFile: null,
+            // フォント
+            numberFontSelected: '1',
+            numberSizeSelected: '1',
+            englishFontSelected: '1',
+            englishSizeSelected: '1',
+            numberFontOptions: [],
+            numberSizeOptions: [],
+            englishFontOptions: [],
+            englishSizeOptions: [],
+            // 色・形状
+            bgColorSelected: '#FFFFFF',
+            borderSelected: '3',
+            borderColorSelected: '#000000',
+            textColorRedSelected: '#FF0000',
+            textColorBlackSelected: '#000000',
+            borderOptions: [],
+            cardSizeSelected: '1',
+            cardSizeOptions: []
+        },
+        computed: {
+            // トランプサイズ（幅）
+            trumpWidth: function() {
+                return this.cardSizeSelected == '1' ? 65 : 58;
+            }
+        },
+        mounted() {
+            this.ctx = this.$refs['canvas'].getContext('2d');
+            this.draw();
+        },
+        created() {
+            axios.get('./setting.json').then(setting => {
+                // set markOptions
+                setting.data.markOptions.forEach(option => {
+                    this.markOptions.push(option);
+                });
+                // set jackOptions
+                setting.data.jackOptions.forEach(option => {
+                    this.jackOptions.push(option);
+                });
+                // set queenOptions
+                setting.data.queenOptions.forEach(option => {
+                    this.queenOptions.push(option);
+                });
+                // set kingOptions
+                setting.data.kingOptions.forEach(option => {
+                    this.kingOptions.push(option);
+                });
+                // set jorkerOptions
+                setting.data.jorkerOptions.forEach(option => {
+                    this.jorkerOptions.push(option);
+                });
+                // set backImgOptions
+                setting.data.backImgOptions.forEach(option => {
+                    this.backImgOptions.push(option);
+                });
+                // set numberFontOptions
+                setting.data.numberFontOptions.forEach(option => {
+                    this.numberFontOptions.push(option);
+                });
+                // set numberSizeOptions
+                setting.data.numberSizeOptions.forEach(option => {
+                    this.numberSizeOptions.push(option);
+                });
+                // set englishFontOptions
+                setting.data.englishFontOptions.forEach(option => {
+                    this.englishFontOptions.push(option);
+                });
+                // set englishSizeOptions
+                setting.data.englishSizeOptions.forEach(option => {
+                    this.englishSizeOptions.push(option);
+                });
+                // set borderOptions
+                setting.data.borderOptions.forEach(option => {
+                    this.borderOptions.push(option);
+                });
+                // set cardSizeOptions
+                setting.data.cardSizeOptions.forEach(option => {
+                    this.cardSizeOptions.push(option);
+                });
+            });
+        },
+        watch: {
+            markSelected() { this.draw(); },
+            jackSelected() { this.draw(); },
+            queenSelected() { this.draw(); },
+            kingSelected() { this.draw(); },
+            jorkerSelected() { this.draw(); },
+            backImgSelected() { this.draw(); },
+            numberFontSelected() { this.draw(); },
+            numberSizeSelected() { this.draw(); },
+            englishFontSelected() { this.draw(); },
+            englishSizeSelected() { this.draw(); },
+            bgColorSelected() { this.draw(); },
+            borderSelected() { this.draw(); },
+            borderColorSelected() { this.draw(); },
+            textColorRedSelected() { this.draw(); },
+            textColorBlackSelected() { this.draw(); },
+            cardSizeSelected() { this.draw(); }
+        },
+        methods: {
+            // canvasの描画
+            draw: function() {
+                // キャンバスクリア
+                this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+                // 背景（透過）
+                this.fillRect(
+                    this.ctx,
+                    {x: 0, y: 0},
+                    {x: this.canvasWidth ,y: this.canvasHeight},
+                    "rgba(0, 0, 0, 0)"
+                );
+                
+                // トランプ52枚
+                for (var row = 0; row < 4; row++) {
+                    for (var num = 0; num < 13; num++) {
+                        this.drawTrump(row, num);  
+                    }
+                }
+
+                // ジョーカー
+                this.drawTrump(4, 0);
+                // 裏面
+                this.drawTrump(4, 1);
+            },
+
+            // トランプ１枚分の描画
+            // @param row 行(0〜3)
+            // @param num 番号(0〜12)
+            drawTrump: function(row, num) {
+                // 左上座標
+                let lu = {x: this.trumpWidth * num, y: this.trumpHeight * row};
+                let rd = {x: lu.x + this.trumpWidth - 1, y: lu.y + this.trumpHeight - 1};
+
+                // 背景
+                this.fillRect(this.ctx, lu, rd, this.bgColorSelected);
+
+                // 外枠
+                switch (this.borderSelected) {
+                    case "1": // 枠線なし
+                        this.drawRect(this.ctx, lu, rd, this.bgColorSelected);
+                        break;
+
+                    case "2": // 枠線あり
+                        this.drawRect(this.ctx, lu, rd, this.borderColorSelected);
+                        break;
+
+                    case "3": // 角丸の枠線
+                        this.drawRoundedRect(this.ctx, lu, rd, 5, this.borderColorSelected);
+                        break;
+                }
+
+                if (row < 4) {
+                    // 数字（左上）
+                    this.fillText(this.ctx, this.getNumber(num), lu.x + 2, lu.y + 16, "14px serif", this.getColor(row));
+
+                    // 数字（右下）
+                    this.fillText(this.ctx, this.getNumber(num), -rd.x + 2, -rd.y + 16, "14px serif", this.getColor(row), Math.PI);
+
+                    // マーク（左上）
+                    this.drawImage(this.ctx, this.getImgSrc(row), lu.x + 2, lu.y + 18, this.markSizeS, this.markSizeS);
+
+                    // マーク（右下）
+                    this.drawImage(this.ctx, this.getImgSrc(row), -rd.x + 2, -rd.y + 18, this.markSizeS, this.markSizeS, Math.PI);
+
+                    // マーク（1〜10）
+                    // プリセット画像
+                    let imgPos = this.getImgPosition(num, lu, rd);
+                    if (imgPos) {
+                        imgPos.forEach(pos => {
+                            if (this.markSelected == '99') {
+                                // ファイルアップロード
+                                // TODO
+                                if (pos.r) {
+                                    this.drawUploadImage(this.ctx, this.markUploadFile, pos.x, pos.y, this.markSize, this.markSize, pos.r);
+                                } else {
+                                    this.drawUploadImage(this.ctx, this.markUploadFile, pos.x, pos.y, this.markSize, this.markSize);
+                                }
+
+                            } else {
+                                // プリセット画像
+                                if (pos.r) {
+                                    this.drawImage(this.ctx, this.getImgSrc(row), pos.x, pos.y, this.markSize, this.markSize, pos.r);
+                                } else {
+                                    this.drawImage(this.ctx, this.getImgSrc(row), pos.x, pos.y, this.markSize, this.markSize);
+                                }
+                            }
+                        });
+                    }
+
+                    // マーク（11〜13）
+                    let img = this.getImg(row, num);
+                    if (img) {
+                        this.drawImage(this.ctx, img, lu.x + 13, lu.y + 13, rd.x - lu.x - 26, rd.y - lu.y - 26);
+                    }
+
+                } else if (num == 0) {
+                    // ジョーカー
+                    // 文字（左上）
+                    this.fillText(this.ctx, "J", lu.x + 2, lu.y + 16, "10px serif", "#000");
+                    this.fillText(this.ctx, "O", lu.x + 2, lu.y + 26, "10px serif", "#000");
+                    this.fillText(this.ctx, "K", lu.x + 2, lu.y + 36, "10px serif", "#000");
+                    this.fillText(this.ctx, "E", lu.x + 2, lu.y + 46, "10px serif", "#000");
+                    this.fillText(this.ctx, "R", lu.x + 2, lu.y + 56, "10px serif", "#000");
+
+                    // 文字（右下）
+                    this.fillText(this.ctx, "J", -rd.x + 2, -rd.y + 16, "10px serif", "#000", Math.PI);
+                    this.fillText(this.ctx, "O", -rd.x + 2, -rd.y + 26, "10px serif", "#000", Math.PI);
+                    this.fillText(this.ctx, "K", -rd.x + 2, -rd.y + 36, "10px serif", "#000", Math.PI);
+                    this.fillText(this.ctx, "E", -rd.x + 2, -rd.y + 46, "10px serif", "#000", Math.PI);
+                    this.fillText(this.ctx, "R", -rd.x + 2, -rd.y + 56, "10px serif", "#000", Math.PI);
+                
+                    // 画像
+                    this.drawImage(this.ctx, "./img/Jorker.png", lu.x + 12, lu.y + 12, rd.x - lu.x - 24, rd.y - lu.y - 24);
+
+                } else if (num == 1) {
+                    // 裏面
+                    this.drawImage(this.ctx, "./img/BackB.png", lu.x + 5, lu.y + 5, rd.x - lu.x - 10, rd.y - lu.y - 10);
+                }
+            },
+
+            getNumber: function(num) {
+                const numbers = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+                return numbers[num];
+            },
+            getColor: function(row) {
+                return row % 2 == 0 ? this.textColorRedSelected : this.textColorBlackSelected;
+            },
+            getImgSrc: function(row) {
+                images = ["./img/MarkH.png", "./img/MarkC.png", "./img/MarkD.png", "./img/MarkS.png"];
+                return images[row];
+            },
+            getImgPosition: function(num, lu, rd) {
+                const posXC = ((lu.x + rd.x) / 2) - this.markSize / 2;
+                let posXL, posXR;
+                if (this.cardSizeSelected == '1') {
+                    posXL = posXC - this.markSize + 2;
+                    posXR = posXC + this.markSize - 2;
+                } else if (this.cardSizeSelected == '2') {
+                    posXL = posXC - this.markSize + 5;
+                    posXR = posXC + this.markSize - 5;
+                }
+                const posXCR = ((lu.x + rd.x) / 2) + this.markSize / 2;
+                let posXLR, posXRR;
+                if (this.cardSizeSelected == '1') {
+                    posXLR = posXCR - this.markSize + 2;
+                    posXRR = posXCR + this.markSize - 2;
+                } else if (this.cardSizeSelected == '2') {
+                    posXLR = posXCR - this.markSize + 5;
+                    posXRR = posXCR + this.markSize - 5;
+                }
+                const posY1 = lu.y + this.markSize;
+                const posY2 = lu.y + this.markSize * (3/2);
+                const posY2S = lu.y + this.markSize * 1.9;
+                const posY3 = ((lu.y + rd.y) / 2) - this.markSize / 2;
+                const posY4 = rd.y - this.markSize * (3/2);
+                const posY4S = rd.y - this.markSize * 1.9;
+                const posY5 = rd.y - this.markSize;
+
+                const position = [
+                    // A
+                    [{x: posXC, y: posY3}],
+                    // 2
+                    [{x: posXC, y: posY1}, {x: -posXCR, y: -posY5, r: Math.PI}],
+                    // 3
+                    [{x: posXC, y: posY1}, {x: posXC, y: posY3}, {x: -posXCR, y: -posY5, r: Math.PI}],
+                    // 4
+                    [{x: posXL, y: posY1}, {x: -posXLR, y: -posY5, r: Math.PI}, {x: posXR, y: posY1},
+                     {x: -posXRR, y: -posY5, r: Math.PI}],
+                    // 5
+                    [{x: posXL, y: posY1}, {x: -posXLR, y: -posY5, r: Math.PI}, {x: posXR, y: posY1},
+                     {x: -posXRR, y: -posY5, r: Math.PI}, {x: posXC, y: posY3}],
+                    // 6
+                    [{x: posXL, y: posY1}, {x: posXL, y: posY3}, {x: -posXLR, y: -posY5, r: Math.PI},
+                     {x: posXR, y: posY1}, {x: posXR, y: posY3}, {x: -posXRR, y: -posY5, r: Math.PI}],
+                    // 7
+                    [{x: posXL, y: posY1}, {x: posXL, y: posY3}, {x: -posXLR, y: -posY5, r: Math.PI},
+                     {x: posXR, y: posY1}, {x: posXR, y: posY3}, {x: -posXRR, y: -posY5, r: Math.PI},
+                     {x: posXC, y: posY2}],
+                    // 8
+                    [{x: posXL, y: posY1}, {x: posXL, y: posY3}, {x: -posXLR, y: -posY5, r: Math.PI},
+                     {x: posXR, y: posY1}, {x: posXR, y: posY3}, {x: -posXRR, y: -posY5, r: Math.PI},
+                     {x: posXC, y: posY2}, {x: -posXCR, y: -posY4, r: Math.PI}],
+                    // 9
+                    [{x: posXL, y: posY1}, {x: posXL, y: posY2S}, {x: -posXLR, y: -posY4S, r: Math.PI}, 
+                     {x: -posXLR, y: -posY5, r: Math.PI}, {x: posXR, y: posY1}, {x: posXR, y: posY2S}, 
+                     {x: -posXRR, y: -posY4S, r: Math.PI}, {x: -posXRR, y: -posY5, r: Math.PI}, {x: posXC, y: posY3}],
+                    // 10
+                    [{x: posXL, y: posY1}, {x: posXL, y: posY2S}, {x: -posXLR, y: -posY4S, r: Math.PI}, 
+                     {x: -posXLR, y: -posY5, r: Math.PI}, {x: posXR, y: posY1}, {x: posXR, y: posY2S}, 
+                     {x: -posXRR, y: -posY4S, r: Math.PI}, {x: -posXRR, y: -posY5, r: Math.PI}, {x: posXC, y: posY2},
+                     {x: -posXCR, y: -posY4, r:Math.PI}]
+                ];
+                return position[num];
+            },
+            getImg: function(row, num) {
+                const img = [
+                    ["./img/HJ.png", "./img/HQ.png", "./img/HK.png"],
+                    ["./img/CJ.png", "./img/CQ.png", "./img/CK.png"],
+                    ["./img/DJ.png", "./img/DQ.png", "./img/DK.png"],
+                    ["./img/SJ.png", "./img/SQ.png", "./img/SK.png"],
+                ];
+                if (num >= 10) {
+                    return img[row][num - 10];
+                } else {
+                    return "";
+                }
+            },
+            download: function() {
+                // canvasの画像をBLOBデータに変換
+                const canvas = this.$refs['canvas'];
+                const mime = "image/png";
+                const base64 = canvas.toDataURL(mime);  // "data:image/png;base64,iVBORw0k〜"
+                const tmp = base64.split(",");
+                const data = atob(tmp[1]);
+
+                let buf = new Uint8Array(data.length);
+                for (let i = 0; i < data.length; i++) {
+                    buf[i] = data.charCodeAt(i);
+                }
+
+                const blobData = new Blob([buf], {type: mime});
+
+                // ダウンロード
+                const dataURI = window.URL.createObjectURL(blobData);
+                const a = document.createElement("a");
+                a.href = dataURI;
+                a.download = "test.png";
+                a.click();
+            }
+        }
+    });
+</script>
+</html>

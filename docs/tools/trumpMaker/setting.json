@@ -1,0 +1,47 @@
+{
+    "markOptions": [
+        { "text": "プリセット", "value": "1" },
+        { "text": "アップロードした画像を使う", "value": "99" }
+    ],
+    "jackOptions": [
+        { "text": "プリセット", "value": "1" },
+        { "text": "アップロードした画像を使う", "value": "99" }
+    ],
+    "queenOptions": [
+        { "text": "プリセット", "value": "1" },
+        { "text": "アップロードした画像を使う", "value": "99" }
+    ],
+    "kingOptions": [
+        { "text": "プリセット", "value": "1" },
+        { "text": "アップロードした画像を使う", "value": "99" }
+    ],
+    "jorkerOptions": [
+        { "text": "プリセット", "value": "1" },
+        { "text": "アップロードした画像を使う", "value": "99" }
+    ],
+    "backImgOptions": [
+        { "text": "プリセット", "value": "1" },
+        { "text": "アップロードした画像を使う", "value": "99" }
+    ],
+    "numberFontOptions": [
+        { "text": "", "value": "1" }
+    ],
+    "numberSizeOptions": [
+        { "text": "", "value": "1" }
+    ],
+    "englishFontOptions": [
+        { "text": "", "value": "1" }
+    ],
+    "englishSizeOptions": [
+        { "text": "", "value": "1" }
+    ],
+    "borderOptions": [
+        { "text": "枠線なし", "value": "1" },
+        { "text": "枠線あり", "value": "2" },
+        { "text": "角丸の枠線", "value": "3" }
+    ],
+    "cardSizeOptions": [
+        { "text": "ポーカーサイズ", "value": "1" },
+        { "text": "ブリッジサイズ", "value": "2" }
+    ]
+}

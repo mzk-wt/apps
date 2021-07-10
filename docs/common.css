@@ -6,23 +6,60 @@ h3 {
 
 }
 
+h5 {
+    margin-bottom: 2px;
+}
+
+/* コンテンツ全体の外枠 */
 .contents-area {
-    width: 500px;
+    width: 980px;
     margin-left: 30px;
 }
 
-.table {
-    width: 100%;
+/* 説明文 */
+.description {
+    font-size: 90%;
 }
 
+/* ラベル */
+.label {
+    text-align: right;
+}
+td.label {
+    width: 100px;
+}
+
+/* テーブル */
+.table {
+    width: 100%;
+    padding-left: 3px !important;
+}
+
+/* テーブル列（２分割用） */
 .table-col {
     width: 50%;
 }
 
+/* 枠線なしのテーブル */
 .table-borderless {
     border: 0;
 }
 
+/* コンフィグ用テーブル */
+.table-config {
+    font-size: 80%;
+}
+
+/* スクロールバー付きのテーブル */
 .table-scrollable {
 
+}
+
+/* 横並び */
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+.flex-row > * {
+    margin-right: 10px;
 }

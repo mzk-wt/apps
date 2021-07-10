@@ -1,11 +1,9 @@
 {
     "toolList": [
-        {"id": 1, "title": "トランプ画像生成機", "url": "./tools/trumpMaker/trumpMaker.html"},
-        {"id": 2, "title": "bbb", "url": ""}
+        {"id": 1, "title": "トランプ画像生成機", "url": "./tools/trumpMaker/trumpMaker.html"}
     ],
 
     "gameList": [
-        {"id": 1, "title": "ccc", "url": ""},
-        {"id": 2, "title": "ddd", "url": ""}
+        {"id": 1, "title": "", "url": ""}
     ]
 }
