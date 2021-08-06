@@ -75,6 +75,9 @@
                                     <option v-for="option in markOptions" v-bind:value="option.value">{{ option.text }}</option>
                                 </select>
                                 <input-file v-model="markUploadFile"></input-file>
+                                <label>
+                                    （高さ:幅=1:4、左から<img src='./img/uploadImage.png' height='18ex'>の並び）
+                                </lable>
                             </td>
                         </tr>
                         <tr>
@@ -200,8 +203,16 @@
                 </div>
 
                 <!-- ダウンロード -->
-                <div id="download" class="tab-pane">
-                    <button class="btn btn-primary" @click="download">ダウンロード</button>
+                <div id="download" class="tab-pane p-2">
+                    <button class="btn btn-primary" @click="download(855, 460)">
+                        ダウンロード<br>PNG<br>（855px * 460px）
+                    </button>
+                    <button class="btn btn-primary ml-5" @click="download(1280, 690)">
+                        ダウンロード<br>PNG<br>（1280px * 690px）
+                    </button>
+                    <button class="btn btn-primary ml-5" @click="download(1710, 920)">
+                        ダウンロード<br>PNG<br>（1710px * 920px）
+                    </button>
                 </div>
             </div>
         </div>
@@ -405,17 +416,26 @@
                     this.drawImage(this.ctx, this.getImgSrc(row), -rd.x + 2, -rd.y + 18, this.markSizeS, this.markSizeS, Math.PI);
 
                     // マーク（1〜10）
-                    // プリセット画像
                     let imgPos = this.getImgPosition(num, lu, rd);
                     if (imgPos) {
                         imgPos.forEach(pos => {
                             if (this.markSelected == '99') {
-                                // ファイルアップロード
-                                // TODO
-                                if (pos.r) {
-                                    this.drawUploadImage(this.ctx, this.markUploadFile, pos.x, pos.y, this.markSize, this.markSize, pos.r);
-                                } else {
-                                    this.drawUploadImage(this.ctx, this.markUploadFile, pos.x, pos.y, this.markSize, this.markSize);
+                                // アップロード画像
+                                if (this.markUploadFile) {
+                                    this.getImageSize(this.markUploadFile, (w, h) => {
+                                        if (pos.r) {
+                                            this.drawUploadImageTrim(
+                                                this.ctx, this.markUploadFile,
+                                                h * row, 0, h, h,
+                                                pos.x, pos.y, this.markSize, this.markSize,
+                                                pos.r);
+                                        } else {
+                                            this.drawUploadImageTrim(
+                                                this.ctx, this.markUploadFile,
+                                                h * row, 0, h, h,
+                                                pos.x, pos.y, this.markSize, this.markSize);
+                                        }
+                                    });
                                 }
 
                             } else {
@@ -430,9 +450,45 @@
                     }
 
                     // マーク（11〜13）
-                    let img = this.getImg(row, num);
-                    if (img) {
-                        this.drawImage(this.ctx, img, lu.x + 13, lu.y + 13, rd.x - lu.x - 26, rd.y - lu.y - 26);
+                    if (num == 10 && this.jackSelected == '99') {
+                        // アップロード画像（Jack)
+                        if (this.jackUploadFile) {
+                            this.getImageSize(this.jackUploadFile, (w, h) => {
+                                this.drawUploadImageTrim(
+                                    this.ctx, this.jackUploadFile,
+                                    (w / 4) * row, 0, w / 4, h,
+                                    lu.x + 13, lu.y + 13, rd.x - lu.x - 26, rd.y - lu.y - 26);
+                            });
+                        }
+
+                    } else if (num == 11 && this.queenSelected == '99') {
+                        // アップロード画像（Queen)
+                        if (this.queenUploadFile) {
+                            this.getImageSize(this.queenUploadFile, (w, h) => {
+                                this.drawUploadImageTrim(
+                                    this.ctx, this.queenUploadFile,
+                                    (w / 4) * row, 0, w / 4, h,
+                                    lu.x + 13, lu.y + 13, rd.x - lu.x - 26, rd.y - lu.y - 26);
+                            });
+                        }
+
+                    } else if (num == 12 && this.kingSelected == '99') {
+                        // アップロード画像（King)
+                        if (this.kingUploadFile) {
+                            this.getImageSize(this.kingUploadFile, (w, h) => {
+                                this.drawUploadImageTrim(
+                                    this.ctx, this.kingUploadFile,
+                                    (w / 4) * row, 0, w / 4, h,
+                                    lu.x + 13, lu.y + 13, rd.x - lu.x - 26, rd.y - lu.y - 26);
+                            });
+                        }
+
+                    } else {
+                        // プリセット画像
+                        let img = this.getImg(row, num);
+                        if (img) {
+                            this.drawImage(this.ctx, img, lu.x + 13, lu.y + 13, rd.x - lu.x - 26, rd.y - lu.y - 26);
+                        }
                     }
 
                 } else if (num == 0) {
@@ -452,11 +508,33 @@
                     this.fillText(this.ctx, "R", -rd.x + 2, -rd.y + 56, "10px serif", "#000", Math.PI);
                 
                     // 画像
-                    this.drawImage(this.ctx, "./img/Jorker.png", lu.x + 12, lu.y + 12, rd.x - lu.x - 24, rd.y - lu.y - 24);
+                    if (this.jorkerSelected == '99') {
+                        // アップロード画像
+                        if (this.jorkerUploadFile) {
+                            this.drawUploadImage(
+                               this.ctx, this.jorkerUploadFile, lu.x + 12, lu.y + 12, rd.x - lu.x - 24, rd.y - lu.y - 24
+                            );
+                        }
+
+                    } else {
+                        // プリセット画像
+                        this.drawImage(this.ctx, "./img/Jorker.png", lu.x + 12, lu.y + 12, rd.x - lu.x - 24, rd.y - lu.y - 24);
+                    }
 
                 } else if (num == 1) {
                     // 裏面
-                    this.drawImage(this.ctx, "./img/BackB.png", lu.x + 5, lu.y + 5, rd.x - lu.x - 10, rd.y - lu.y - 10);
+                    if (this.backImgSelected == '99') {
+                        // アップロード画像
+                        if (this.backImgUploadFile) {
+                            this.drawUploadImage(
+                                this.ctx, this.backImgUploadFile, lu.x + 5, lu.y + 5, rd.x - lu.x - 10, rd.y - lu.y - 10
+                            );
+                        }
+
+                    } else {
+                        // プリセット画像
+                        this.drawImage(this.ctx, "./img/BackB.png", lu.x + 5, lu.y + 5, rd.x - lu.x - 10, rd.y - lu.y - 10);
+                    }
                 }
             },
 
@@ -547,20 +625,11 @@
                     return "";
                 }
             },
-            download: function() {
+            doDownload: function(canvas) {
                 // canvasの画像をBLOBデータに変換
-                const canvas = this.$refs['canvas'];
                 const mime = "image/png";
                 const base64 = canvas.toDataURL(mime);  // "data:image/png;base64,iVBORw0k〜"
-                const tmp = base64.split(",");
-                const data = atob(tmp[1]);
-
-                let buf = new Uint8Array(data.length);
-                for (let i = 0; i < data.length; i++) {
-                    buf[i] = data.charCodeAt(i);
-                }
-
-                const blobData = new Blob([buf], {type: mime});
+                const blobData = this.cnvBlobData(base64, mime);
 
                 // ダウンロード
                 const dataURI = window.URL.createObjectURL(blobData);
@@ -568,6 +637,11 @@
                 a.href = dataURI;
                 a.download = "test.png";
                 a.click();
+            },
+            download: function(w, h) {
+                const canvas = this.$refs['canvas'];
+                const newCanvas = this.resizeCanvas(canvas, w, h);
+                this.doDownload(newCanvas);
             }
         }
     });

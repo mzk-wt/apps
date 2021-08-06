@@ -1,5 +1,13 @@
 h1 {
-
+    position: relative;
+    padding: 0.25em 0;
+}
+h1:after {
+    content: "";
+    display: block;
+    height: 4px;
+    background: -webkit-linear-gradient(to right, rgb(77, 73, 73), transparent);
+    background: linear-gradient(to right, rgb(77, 73, 73), transparent);
 }
 
 h3 {
