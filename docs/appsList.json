@@ -4,6 +4,6 @@
     ],
 
     "gameList": [
-        {"id": 1, "title": "", "url": ""}
+        {"id": 1, "title": "Action001", "url": "./games/Action001/index.html"}
     ]
 }
